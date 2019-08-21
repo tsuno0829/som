@@ -1,3 +1,4 @@
+import glob
 import numpy as np
 from sklearn import datasets
 
@@ -16,3 +17,10 @@ def make_hyperbolic_paraboloid(N, rng, random_state=True):
 
 def make_swiss_roll(n_samples, noise, random_state):
     return datasets.make_swiss_roll(n_samples, noise, random_state)
+
+def make_datasets4som2(datasets_path):
+    # e.g.
+    # datasets_path = '../datasets/datasets4som2/*'
+    path = glob.glob(datasets_path)
+    X = np.array([np.loadtxt(p) for p in path])
+    return X
