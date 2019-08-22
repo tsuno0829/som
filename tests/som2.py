@@ -23,7 +23,7 @@ def update(t, fig, ax1, ax2, ax3, X, zeta, zeta_parent, k, y, l):
     for i, ax in enumerate(ax1):
         ax.cla()
         ax.scatter(zeta[k[i,t]][:,0],zeta[k[i,t]][:,1])
-        ax.set_title('(Latent) child_SOM{}'.format(i))
+        ax.set_title('(Latent space) child_SOM{}'.format(i))
         Y = np.reshape(y[i,t], (K,K,2))
         ax2.scatter(Y[:,:,0], Y[:,:,1])
         ax2.set_xlabel("X-axis")
