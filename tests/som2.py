@@ -99,13 +99,13 @@ if __name__ == '__main__':
     history_parent_l = np.array(parent_som.history()['l'])
     print(history_child_k.shape, history_child_y.shape, history_parent_l.shape)
 
-    fig = plt.figure(figsize=(14,14))
-    plt.subplots_adjust(wspace=0.25, hspace=0.25)
+    fig = plt.figure(figsize=(10,10))
+    plt.subplots_adjust(wspace=0.25, hspace=0.4)
     ax1 = []
     for i in range(1,I+1):
-        ax1.append(fig.add_subplot(3,4,i))
-    ax2 = fig.add_subplot(3,4,10)
-    ax3 = fig.add_subplot(3,4,11)
+        ax1.append(fig.add_subplot(4,3,i))
+    ax2 = fig.add_subplot(4,3,10)
+    ax3 = fig.add_subplot(4,3,11)
     fargs = [fig, ax1, ax2, ax3, X, zeta, zeta_parent, history_child_k, history_child_y, history_parent_l]
     ani = anim.FuncAnimation(fig, update, fargs=fargs, interval=interval, frames=T)
     ani.save("som2.gif", writer='imagemagick')
