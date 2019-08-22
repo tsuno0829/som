@@ -14,19 +14,24 @@ import matplotlib.colors as colors
 import matplotlib.animation as anim
 from matplotlib.cm import ScalarMappable
 
-def update(t, fig, ax1, ax2, X, zeta, k, y):
+def update(t, fig, ax1, ax2, ax3, X, zeta, zeta_parent, k, y, l):
     plt.cla()
     ax2.cla()
     for i in range(len(X)):
-        ax2.scatter(X[i, :, 0], X[i, :, 1])
+        ax2.scatter(X[i,:,0], X[i,:,1])
 
     for i, ax in enumerate(ax1):
         ax.cla()
         ax.scatter(zeta[k[i,t]][:,0],zeta[k[i,t]][:,1])
+        ax.set_title('(Latent) child_SOM{}'.format(i))
         Y = np.reshape(y[i,t], (K,K,2))
         ax2.scatter(Y[:,:,0], Y[:,:,1])
         ax2.set_xlabel("X-axis")
         ax2.set_ylabel("Y-axis")
+        ax2.set_title('(Observation space) child_SOM')
+
+    ax3.scatter(zeta_parent[l[t]][:,0], zeta_parent[l[t]][:,1])
+    ax3.set_title('(Latent space) parent_SOM')
     fig.suptitle('{}epoch'.format(t+1), fontsize=16)
 
 if __name__ == '__main__':
@@ -35,7 +40,7 @@ if __name__ == '__main__':
     K = 15           # 潜在空間のノード数(K**2)
     D = 2            # データ次元
     I = 9            # 親SOMのデータの個数
-    L = 10           # 親SOMのユニット数
+    L = 15           # 親SOMのユニット数
     T = 30           # 学習回数
     tau = 25         # 時定数(T>tau)
     sigma_max = 2.0  # 近傍半径の最大値
@@ -91,14 +96,17 @@ if __name__ == '__main__':
 
     history_child_k = np.array([som.history()['k'] for som in child_som])
     history_child_y = np.array([som.history()['y'] for som in child_som])
-    history_parent = parent_som.history()
-    print(history_child_k.shape, history_child_y.shape)
+    history_parent_l = np.array(parent_som.history()['l'])
+    print(history_child_k.shape, history_child_y.shape, history_parent_l.shape)
 
-    fig = plt.figure(figsize=(20,16))
+    fig = plt.figure(figsize=(14,14))
+    plt.subplots_adjust(wspace=0.25, hspace=0.25)
     ax1 = []
     for i in range(1,I+1):
-        ax1.append(fig.add_subplot(5,2,i))
-    ax2 = fig.add_subplot(5,2,10)
-    fargs = [fig, ax1, ax2, X, zeta, history_child_k, history_child_y]
+        ax1.append(fig.add_subplot(3,4,i))
+    ax2 = fig.add_subplot(3,4,10)
+    ax3 = fig.add_subplot(3,4,11)
+    fargs = [fig, ax1, ax2, ax3, X, zeta, zeta_parent, history_child_k, history_child_y, history_parent_l]
     ani = anim.FuncAnimation(fig, update, fargs=fargs, interval=interval, frames=T)
     ani.save("som2.gif", writer='imagemagick')
+    #plt.tight_layout()
