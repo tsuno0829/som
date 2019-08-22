@@ -1,6 +1,6 @@
 import numpy as np
 
-class SOM():
+class SOM(object):
     def __init__(self, N, K, sigma_max, sigma_min, tau):
         self.t = 0
         self.N = N
@@ -23,6 +23,7 @@ class SOM():
         y = (1/g[:,None]) * h @ X                                                                        # y : K×D
         
         # 潜在変数Zの推定
+        # yをself.yに変更する
         self.k = np.argmin( np.sum((X[:,None,:]-y[None,:,:])**2, axis=2), axis=1 )
         
         self.t += 1
