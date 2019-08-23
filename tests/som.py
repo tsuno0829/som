@@ -15,6 +15,8 @@ from matplotlib.cm import ScalarMappable
 
 def update(t, fig, ax1, ax2, X, zeta, k, y):
     plt.cla()
+    print("X[:,0].shape:{}".format(X[:,0].shape))
+    print("zeta[k[t]][:,0].shape:{}".format(zeta[k[t]][:,0].shape))
     ax1.scatter(zeta[k[t]][:,0],zeta[k[t]][:,1],c=X[:,0])
     ax2.scatter3D(X[:,0],X[:,1],X[:,2],c=X[:,0])
     Y = np.reshape(y[t], (K,K,3))
@@ -54,7 +56,3 @@ if __name__ == '__main__':
     fargs = [fig, ax1, ax2, X, zeta, history['k'], history['y']]
     ani = anim.FuncAnimation(fig, update, fargs=fargs, interval=interval, frames=T)
     ani.save("som.gif", writer = 'imagemagick')
-
-
-
-

@@ -21,6 +21,6 @@ def make_swiss_roll(n_samples, noise, random_state):
 def make_datasets4som2(datasets_path):
     # e.g.
     # datasets_path = '../datasets/datasets4som2/*'
-    path = glob.glob(datasets_path)
+    path = sorted(glob.glob(datasets_path))
     X = np.array([np.loadtxt(p) for p in path])
     return X
