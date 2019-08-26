@@ -1,0 +1,3 @@
+[submodule "KSE"]
+	path = KSE
+	url = https://github.com/furukawa-laboratory/KSE.git
