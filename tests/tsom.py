@@ -3,6 +3,8 @@
 import sys
 sys.path.append('../')
 from datasets.datasets import make_hyperbolic_paraboloid_tsom
+#from KSE.lib.datasets.artificial.spiral import create_data
+#from KSE.lib.datasets.artificial.swiss_roll_2d_mani import create_data
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +14,8 @@ from mpl_toolkits.mplot3d import Axes3D
 np.random.seed(1)
 
 # データの生成
-X = make_hyperbolic_paraboloid_tsom(20, 20)
+X = make_hyperbolic_paraboloid_tsom(30, 30)
+#X = create_data(100, 100)
 print(X.shape)
 
 Kx = 20
@@ -45,7 +48,7 @@ mode2_x = np.linspace(-1, 1, Lx)
 mode2_y = np.linspace(-1, 1, Ly)
 mode1_Zeta1, mode1_Zeta2 = np.meshgrid(mode1_x, mode1_y)
 mode2_Zeta1, mode2_Zeta2 = np.meshgrid(mode2_x, mode2_y)
-Zeta1 = np.c_[mode1_Zeta2.ravel(), mode1_Zeta1.ravel()]   # np.stack + np.reshape = np.c_
+Zeta1 = np.c_[mode1_Zeta1.ravel(), mode1_Zeta2.ravel()]   # np.stack + np.reshape = np.c_
 Zeta2 = np.c_[mode2_Zeta1.ravel(), mode2_Zeta2.ravel()]
 
 k_star = np.random.randint(K, size=I)
@@ -58,10 +61,6 @@ Y_allepoch = np.zeros((T, K, L, D))
 
 for t in range(T):
     print('{}回目'.format(t+1))
-
-    k_allepoch[t, :] = k_star
-    l_allepoch[t, :] = l_star
-    Y_allepoch[t, :, :, :] = Y
 
     sigma1_t = max(sigma1_max - (sigma1_max - sigma1_min) * t / tau1, sigma1_min)
     sigma2_t = max(sigma2_max - (sigma2_max - sigma2_min) * t / tau2, sigma2_min)
@@ -107,6 +106,9 @@ for t in range(T):
     l_star = np.argmin(np.sum(np.sum((V[:, :, None, :] - Y[:, None, :, :]) ** 2, axis=3), axis=0), axis=1)   # (K, J, L, D)
     print('l_star.shape:{}'.format(l_star.shape))
 
+    k_allepoch[t, :] = k_star
+    l_allepoch[t, :] = l_star
+    Y_allepoch[t, :, :, :] = Y
 
 def update(t, T, fig, ax1, ax2, ax3, X, Zeta1, Zeta2, k_star, l_star, Y_allepoch):
     ax1.cla()
@@ -116,7 +118,7 @@ def update(t, T, fig, ax1, ax2, ax3, X, Zeta1, Zeta2, k_star, l_star, Y_allepoch
     ax1.scatter(Zeta1[k_star[t]][:, 0], Zeta1[k_star[t]][:, 1])
     ax2.scatter(Zeta2[l_star[t]][:, 0], Zeta2[l_star[t]][:, 1])
     ax3.plot_wireframe(Y_allepoch[t, :, :, 0], Y_allepoch[t, :, :, 1], Y_allepoch[t, :, :, 2])
-    ax3.scatter(X[:, :, 0], X[:, :, 1], X[:, :, 2])
+    ax3.scatter(X[:, :, 0], X[:, :, 1], X[:, :, 2], marker='+')
 
     fig.suptitle('[{}/{}epoch]   (Left) Latent Space   (Right) Observation Space'.format(t + 1, T), fontsize=16)
 
@@ -130,4 +132,4 @@ if __name__ == '__main__':
     ax3 = plt.subplot2grid(gridsize, (0, 2), colspan=5, rowspan=4, projection='3d')
     fargs = [T, fig, ax1, ax2, ax3, X, Zeta1, Zeta2, k_allepoch, l_allepoch, Y_allepoch]
     ani = anim.FuncAnimation(fig, update, fargs=fargs, interval=interval, frames=T)
-    ani.save("tsom2.gif", writer='pillow')
+    ani.save("tsom_kura.gif", writer='pillow')
