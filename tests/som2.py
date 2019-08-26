@@ -42,8 +42,8 @@ def update(t, T, D, I, fig, ax1, ax2, ax3, ax4, X, zeta, zeta_parent, k, y, l, y
             Y_gen = np.reshape(y_gen[i], (K,K,D))
             ax4.scatter(Y_gen[:,:,0], Y_gen[:,:,1], s=60, marker='*', c=XX, cmap='RdYlGn', label='generated data')
 
-    ax3.set_xlim(-1.1,1.1)
-    ax3.set_ylim(-1.1,1.1)
+    ax3.set_xlim(-1.1, 1.1)
+    ax3.set_ylim(-1.1, 1.1)
     ax2.set_xlabel("X-axis")
     ax2.set_ylabel("Y-axis")
     ax4.set_xlabel("X-axis")
@@ -52,7 +52,7 @@ def update(t, T, D, I, fig, ax1, ax2, ax3, ax4, X, zeta, zeta_parent, k, y, l, y
     ax3.set_title('Parent SOM')
     ax4.set_title('Reference Vector( + Generated ☆ )')
 
-    fig.suptitle('[{}epoch]   (Left) Latent Space   (Right) Observation Space'.format(t+1), fontsize=16)
+    fig.suptitle('[{}/{}epoch]   (Left) Latent Space   (Right) Observation Space'.format(t + 1, T), fontsize=16)
 
 if __name__ == '__main__':
     np.random.seed(1)
@@ -60,9 +60,9 @@ if __name__ == '__main__':
     K = 25                  # 潜在空間のノード数(K**2)
     D = 2                   # データ次元
     I = 9                   # 親SOMのデータの個数
-    L = 10                  # 親SOMのユニット数
-    T = 20                  # 学習回数
-    tau = 19                # 時定数(T>tau)
+    L = 75                  # 親SOMのユニット数
+    T = 30                  # 学習回数
+    tau = T - 5             # 時定数(T>tau)
     sigma_max_child = 1.0   # 近傍半径の最大値
     sigma_min_child = 0.1   # 近傍半径の最小値
     sigma_max_parent = 1.0
@@ -120,6 +120,7 @@ if __name__ == '__main__':
     print('学習後の親SOMのl:{}'.format(sorted(history_parent_l[-1])))
     history_parent_w = np.array(parent_som.history()['w'])
     l_gen = np.array(list(range(L**2)))
+    #l_gen = np.array([1])
 
     w_gen = history_parent_w[-1][l_gen]
     print('w_gen.shape:{}'.format(w_gen.shape))
@@ -138,4 +139,4 @@ if __name__ == '__main__':
     ax4 = plt.subplot2grid(gridsize, (3,3), colspan=3, rowspan=3)
     fargs = [T, D, I, fig, ax1, ax2, ax3, ax4, X, zeta, zeta_parent, history_child_k, history_child_y, history_parent_l, y_gen, l_gen]
     ani = anim.FuncAnimation(fig, update, fargs=fargs, interval=interval, frames=T)
-    ani.save("som2.gif", writer='imagemagick')
+    ani.save("som2.gif", writer='pillow')

@@ -22,8 +22,8 @@ class SOM(object):
 
         # 参照ベクトルYの推定
         h = np.exp(-1 / (2 * (sigma_t ** 2)) * np.sum((self.zeta[self.k][None, :, :] - self.zeta[:, None, :]) ** 2, axis=2))  # h : K×N
-        g = np.sum(h, axis=1)   # g : K×1
-        self.y = (1 / g[:, None]) * h @ self.X   # y : K×D
+        G = np.diag(np.sum(h, axis=1))
+        self.y = np.linalg.inv(G) @ h @ self.X
 
         self.t += 1
         self.hist.setdefault('y', []).append(self.y)
@@ -41,7 +41,7 @@ class SOM2(object):
         self.sigma_max = sigma_max
         self.sigma_min = sigma_min
         self.tau = tau
-        self.l = np.random.randint(self.L**2, size=self.I) # l : I×1
+        self.l = np.random.randint(self.L**2, size=self.I)   # l : I×1
         print(self.l.shape)
         self.zeta = zeta
         self.hist = {}
@@ -57,9 +57,9 @@ class SOM2(object):
         # 参照ベクトルYの推定
         h = np.exp(-1 / (2 * (self.sigma_t ** 2)) * np.sum((self.zeta[self.l][None,:,:] - self.zeta[:,None,:])**2, axis=2))  # h : L×I
         print('h.shape:{}'.format(h.shape))
-        g = np.sum(h, axis=1)[:, None]  # g : I×1
-        print('g.shape:{}'.format(g.shape))
-        self.w = (1 / g) * h @ v   # w : L×KD
+        G = np.diag(np.sum(h, axis=1))  # g : I×1
+        print('G.shape:{}'.format(G.shape))
+        self.w = np.linalg.inv(G) @ h @ v   # w : L×KD
         print('w.shape:{}'.format(self.w.shape))
 
         # 潜在変数Zの推定
